@@ -45,7 +45,25 @@ local plugins = {
         require "plugins.configs.lspconfig"
         require "custom.configs.lspconfig"
     end,
-  }
+  },
+  {
+    "hrsh7th/nvim-cmp",
+    opts = function()
+      return vim.tbl_deep_extend(
+        "force",
+        require "plugins.configs.cmp",
+        require "custom.configs.cmp")
+    end,
+    config = function(_, opts)
+      require("cmp").setup(opts)
+    end,
+  },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      ensure_installed = { "lua", "cpp" }
+    }
+  },
 }
 
 return plugins
