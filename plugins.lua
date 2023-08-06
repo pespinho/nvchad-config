@@ -24,8 +24,9 @@ local plugins = {
   },
   {
     "nvim-treesitter/nvim-treesitter",
+    lazy = false,
     opts = {
-      ensure_installed = { "lua", "cpp" },
+      ensure_installed = { "lua", "cpp", "bash", "markdown", "markdown_inline", "regex", "c_sharp" },
     },
   },
   {
@@ -124,6 +125,10 @@ local plugins = {
   {
     "dense-analysis/ale",
     lazy = false,
+    init = function()
+      -- This will avoid ALE to output messages everytime the cursor moves.
+      vim.g.ale_hover_cursor = 0
+    end,
     config = function()
       vim.g.ale_use_neovim_diagnostics_api = 1
     end
@@ -148,6 +153,7 @@ local plugins = {
     end,
     keys = {
       { '<F5>',       function() require('dap').continue() end,           desc = "Debug continue" },
+      { '<S-F5>',     function() require('dap').terminate() end,          desc = "Debug terminate" },
       { '<F10>',      function() require('dap').step_over() end,          desc = "Step Over" },
       { '<F11>',      function() require('dap').step_into() end,          desc = "Step Into" },
       { '<S-F11>',    function() require('dap').step_out() end,           desc = "Step Out" },
@@ -209,6 +215,17 @@ local plugins = {
         zindex = 20,     -- The Z-index of the context window
         on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
       }
+    end
+  },
+  {
+    "jlcrochet/vim-razor",
+    lazy = false
+  },
+  {
+    "ggandor/leap.nvim",
+    lazy = false,
+    config = function()
+      require('leap').add_default_mappings()
     end
   }
 }
