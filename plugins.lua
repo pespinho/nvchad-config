@@ -26,7 +26,7 @@ local plugins = {
         "nvim-treesitter/nvim-treesitter",
         lazy = false,
         opts = {
-            ensure_installed = { "lua", "c", "cpp", "bash", "markdown", "markdown_inline", "regex", "c_sharp" },
+            ensure_installed = { "lua", "c", "cpp", "bash", "markdown", "markdown_inline", "regex", "c_sharp", "jsonc" },
         },
     },
     {
@@ -43,6 +43,9 @@ local plugins = {
     },
     {
         "theprimeagen/harpoon",
+        dependencies = {
+            { 'nvim-lua/plenary.nvim' }
+        },
         keys = {
             { "<leader>aa", function() require("harpoon.mark").add_file() end,        desc = "Harpoon add", },
             { "<leader>am", function() require("harpoon.ui").toggle_quick_menu() end, desc = "Harpoon menu", },
@@ -97,7 +100,7 @@ local plugins = {
                     vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end,
                         { desc = "LSP code action" })
                     vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, { desc = "LSP references" })
-                    vim.keymap.set("n", "<leader>fd", function() vim.diagnostic.open_float() { border = "rounded" } end,
+                    vim.keymap.set("n", "<leader>fd", function() vim.diagnostic.open_float({ border = "rounded" }) end,
                         { desc = "Floating diagnostic" })
                     vim.keymap.set("n", "<leader>dp",
                         function() vim.diagnostic.goto_prev { float = { border = "rounded" } } end,
@@ -268,7 +271,34 @@ local plugins = {
         "NvChad/nvim-colorizer.lua",
         config = function()
         end
-    }
+    },
+    {
+        -- snippet plugin
+        "L3MON4D3/LuaSnip",
+        dependencies = "rafamadriz/friendly-snippets",
+        opts = {
+            history = true,
+            updateevents = "TextChanged,TextChangedI",
+            region_check_events = "InsertEnter",
+            delete_check_events = "TextChanged,InsertLeave",
+        },
+    },
+    {
+        "nvim-tree/nvim-tree.lua",
+        cmd = { "NvimTreeToggle", "NvimTreeFocus" },
+        init = function()
+            require("core.utils").load_mappings "nvimtree"
+        end,
+        opts = function()
+            local options = require "plugins.configs.nvimtree"
+            options.actions.open_file.resize_window = false
+            return options
+        end,
+        config = function(_, opts)
+            dofile(vim.g.base46_cache .. "nvimtree")
+            require("nvim-tree").setup(opts)
+        end,
+    },
 }
 
 return plugins
