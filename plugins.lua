@@ -26,7 +26,9 @@ local plugins = {
         "nvim-treesitter/nvim-treesitter",
         lazy = false,
         opts = {
-            ensure_installed = { "lua", "c", "cpp", "bash", "markdown", "markdown_inline", "regex", "c_sharp", "jsonc" },
+            ensure_installed = { "lua", "c", "cpp", "bash", "markdown", "markdown_inline", "regex", "c_sharp", "jsonc",
+                "yaml", "xml" },
+            auto_install = true,
         },
     },
     {
@@ -134,7 +136,6 @@ local plugins = {
                 if luaSetup.on_init ~= nil then
                     luaSetup.on_init(client)
                 end
-                client.server_capabilities.semanticTokensProvider = nil
             end
 
             luaSetup.settings.Lua.format = {
@@ -276,6 +277,8 @@ local plugins = {
         -- snippet plugin
         "L3MON4D3/LuaSnip",
         dependencies = "rafamadriz/friendly-snippets",
+        version = "v2.*",
+        build = "make install_jsregexp",
         opts = {
             history = true,
             updateevents = "TextChanged,TextChangedI",
@@ -299,6 +302,24 @@ local plugins = {
             require("nvim-tree").setup(opts)
         end,
     },
+    {
+        'javiorfo/nvim-soil',
+        lazy = false,
+        ft = "plantuml",
+        config = function()
+            -- If you want to change default configurations
+        end
+    },
+    {
+        "folke/todo-comments.nvim",
+        lazy = false,
+        dependencies = { "nvim-lua/plenary.nvim" },
+        opts = {
+            -- your configuration comes here
+            -- or leave it empty to use the default settings
+            -- refer to the configuration section below
+        }
+    }
 }
 
 return plugins
