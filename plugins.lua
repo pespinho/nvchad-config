@@ -90,7 +90,8 @@ local plugins = {
             lsp.on_attach(
                 function(client, bufnr)
                     vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, { desc = "LSP declaration" })
-                    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { desc = "LSP hover" })
+                    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, { desc = "LSP definition" })
+                    -- vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { desc = "LSP hover" })
                     vim.keymap.set("n", "gi", function() vim.lsp.buf.implementation() end,
                         { desc = "LSP implementation" })
                     vim.keymap.set("n", "<leader>ls", function() vim.lsp.buf.signature_help() end,
@@ -132,6 +133,7 @@ local plugins = {
 
             -- (Optional) Configure lua language server for neovim
             local luaSetup = lsp.nvim_lua_ls()
+
             luaSetup.on_init = function(client)
                 if luaSetup.on_init ~= nil then
                     luaSetup.on_init(client)
@@ -318,6 +320,142 @@ local plugins = {
             -- your configuration comes here
             -- or leave it empty to use the default settings
             -- refer to the configuration section below
+        }
+    },
+    {
+        "nvimtools/none-ls.nvim",
+        lazy = false,
+        config = function()
+            local null_ls = require("null-ls")
+
+            null_ls.setup({
+                sources = {
+                    null_ls.builtins.diagnostics.markdownlint,
+                    null_ls.builtins.formatting.markdownlint,
+                },
+            })
+        end
+    },
+    {
+        "nvim-treesitter/nvim-treesitter-textobjects",
+        lazy = false,
+        dependencies = {
+            { "nvim-treesitter/nvim-treesitter" }
+        },
+        config = function()
+            require 'nvim-treesitter.configs'.setup {
+                textobjects = {
+                    select = {
+                        enable = true,
+
+                        -- Automatically jump forward to textobj, similar to targets.vim
+                        lookahead = true,
+
+                        keymaps = {
+                            -- You can use the capture groups defined in textobjects.scm
+                            ["af"] = { query = "@function.outer", desc = "Select function outer" },
+                            ["if"] = { query = "@function.inner", desc = "Select function inner" },
+                            ["ab"] = { query = "@block.outer", desc = "Select block outer" },
+                            ["ib"] = { query = "@block.inner", desc = "Select block inner" },
+                            ["ap"] = { query = "@parameter.outer", desc = "Select parameter outer" },
+                            ["ip"] = { query = "@parameter.inner", desc = "Select parameter inner" },
+                        },
+                    },
+                    move = {
+                        enable = true,
+                        set_jumps = true, -- whether to set jumps in the jumplist
+                        goto_next_start = {
+                            ["]f"] = "@function.outer",
+                        },
+                        goto_next_end = {
+                            ["]F"] = "@function.outer",
+                        },
+                        goto_previous_start = {
+                            ["[f"] = "@function.outer",
+                        },
+                        goto_previous_end = {
+                            ["[F"] = "@function.outer",
+                        },
+                    },
+                },
+            }
+        end
+    },
+    {
+        "zbirenbaum/copilot.lua",
+        lazy = false,
+        config = function()
+            require("copilot").setup({
+                filetypes = {
+                    lua = true
+                },
+                suggestion = {
+                    auto_trigger = true
+                }
+            })
+        end
+    },
+    {
+        "kevinhwang91/nvim-ufo",
+        lazy = false,
+        config = function()
+            vim.o.foldcolumn = '0' -- '0' is not bad
+            vim.o.foldlevel = 99   -- Using ufo provider need a large value, feel free to decrease the value
+            vim.o.foldlevelstart = 99
+            vim.o.foldenable = true
+
+            -- Tell the server the capability of foldingRange,
+            -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities.textDocument.foldingRange = {
+                dynamicRegistration = false,
+                lineFoldingOnly = true
+            }
+            local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
+            for _, ls in ipairs(language_servers) do
+                require('lspconfig')[ls].setup({
+                    capabilities = capabilities
+                    -- you can add other fields for setting up lsp server in this table
+                })
+            end
+            require('ufo').setup()
+        end,
+        dependencies = {
+            { 'kevinhwang91/promise-async' }
+        }
+    },
+    {
+        "yaocccc/nvim-foldsign",
+        event = "CursorHold",
+        config = function()
+            require('nvim-foldsign').setup({
+                offset = -2,
+                foldsigns = {
+                    open = '', -- mark the beginning of a fold
+                    close = '', -- show a closed fold
+                    seps = { '│' }, -- open fold middle marker
+                }
+            })
+        end
+    },
+    {
+        'cameron-wags/rainbow_csv.nvim',
+        lazy = false,
+        config = true,
+        ft = {
+            'csv',
+            'tsv',
+            'csv_semicolon',
+            'csv_whitespace',
+            'csv_pipe',
+            'rfc_csv',
+            'rfc_semicolon'
+        },
+        cmd = {
+            'RainbowDelim',
+            'RainbowDelimSimple',
+            'RainbowDelimQuoted',
+            'RainbowMultiDelim'
         }
     }
 }
