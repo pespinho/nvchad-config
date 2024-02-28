@@ -125,6 +125,22 @@ local plugins = {
                 end
             )
 
+            -- Tell the server the capability of foldingRange,
+            -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities.textDocument.foldingRange = {
+                dynamicRegistration = false,
+                lineFoldingOnly = true
+            }
+
+            local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
+
+            for _, ls in ipairs(language_servers) do
+                require('lspconfig')[ls].setup({
+                    capabilities = capabilities
+                })
+            end
+
             require('lspconfig').clangd.setup({
                 on_init = function(client)
                     client.server_capabilities.semanticTokensProvider = nil
@@ -152,17 +168,6 @@ local plugins = {
             lsp.setup()
         end
     },
-    -- {
-    --   "dense-analysis/ale",
-    --   lazy = false,
-    --   init = function()
-    --     -- This will avoid ALE to output messages everytime the cursor moves.
-    --     vim.g.ale_hover_cursor = 0
-    --   end,
-    --   config = function()
-    --     vim.g.ale_use_neovim_diagnostics_api = 1
-    --   end
-    -- },
     {
         "folke/trouble.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -404,20 +409,6 @@ local plugins = {
             vim.o.foldlevelstart = 99
             vim.o.foldenable = true
 
-            -- Tell the server the capability of foldingRange,
-            -- Neovim hasn't added foldingRange to default capabilities, users must add it manually
-            local capabilities = vim.lsp.protocol.make_client_capabilities()
-            capabilities.textDocument.foldingRange = {
-                dynamicRegistration = false,
-                lineFoldingOnly = true
-            }
-            local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
-            for _, ls in ipairs(language_servers) do
-                require('lspconfig')[ls].setup({
-                    capabilities = capabilities
-                    -- you can add other fields for setting up lsp server in this table
-                })
-            end
             require('ufo').setup()
         end,
         dependencies = {
