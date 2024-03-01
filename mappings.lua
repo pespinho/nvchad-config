@@ -21,11 +21,15 @@ M.general = {
                 end
             end,
             "hover"
-        }
+        },
+        ["H"] = { "^", "move to first non-blank character" },
+        ["L"] = { "$", "move to end of line" },
     },
     v = {
         ["J"] = { ":m '>+1<CR>gv=gv", "move line down" },
         ["K"] = { ":m '<-2<CR>gv=gv", "move line up" },
+        ["H"] = { "^", "move to first non-blank character" },
+        ["L"] = { "$", "move to end of line" },
     },
     t = {
         ["<C-h>"] = { "<C-\\><C-N><C-w>h", "window left" },
