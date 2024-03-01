@@ -364,6 +364,8 @@ local plugins = {
                             ["ib"] = { query = "@block.inner", desc = "Select block inner" },
                             ["ap"] = { query = "@parameter.outer", desc = "Select parameter outer" },
                             ["ip"] = { query = "@parameter.inner", desc = "Select parameter inner" },
+                            ["ac"] = { query = "@call.outer", desc = "Select call outer" },
+                            ["ic"] = { query = "@call.inner", desc = "Select call inner" },
                         },
                     },
                     move = {
